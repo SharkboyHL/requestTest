@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Request Test</title>
+</head>
+
+<body>
+    <script>
+        async function main() {
+            const now = new Date()
+            const request = await fetch("data.json")
+            const data = await request.json()
+
+            data.forEach(pessoa => {
+                const [y, m, d] = pessoa.dataNasc
+                const nasc = new Date(y,m,d)
+                document.body.innerHTML += `<button>
+                    ${pessoa.nome},
+                    ${now.getTime() - nasc.getTime()},
+                    ${pessoa.apelido},
+                    ${pessoa.corFavorita}
+                </button>`
+            })
+        }
+
+        main()
+    </script>
+</body>
+
+</html>
