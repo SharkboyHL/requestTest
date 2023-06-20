@@ -6,32 +6,39 @@ const { getDatabaseInstance } = require("./database")
 const app = express()
 
 app.use(express.static(__dirname + '/public'))
+app.use(express.json())
 
-app.use("/create", async (req, res) => {
-    const { title, source, description, thumb } = req.query
+app.post("/movies", async (req, res) => {
+    const { title, source, description, thumb } = req.body
     const db = await getDatabaseInstance()
-    const create = await db.run(`INSERT INTO movies(title, source, description, thumb) VALUES (?, ?, ?, ?)`,
+    const post = await db.run(`INSERT INTO movies(title, source, description, thumb) VALUES (?, ?, ?, ?)`,
         [title, source, description, thumb]
     )
-    res.send(create)
+    res.send(post)
 })
 
-app.use("/read", async (req, res) => {
-    const { id } = req.query
+app.get("/movies", async (req, res) => {
+    const { id } = req.body
     const db = await getDatabaseInstance()
-    const read = await db.get(`SELECT * FROM movies WHERE id=?`, [id])
-    res.send(read)
+    const get = await db.get(`SELECT * FROM movies WHERE id=?`, [id])
+    res.send(get)
 })
 
-app.use("/update", async (req, res) => {
-    const { title, source, description, thumb, id } = req.query
+app.put("/movies", async (req, res) => {
+    const { title, source, description, thumb, id } = req.body
     const db = await getDatabaseInstance()
-    const update = await db.get(`UPDATE movies SET title=?, source=?, description=?, thumb=? WHERE id=?`, [title, source, description, thumb, id])
-    res.send(update)
+    const put = await db.get(`UPDATE movies SET title=?, source=?, description=?, thumb=? WHERE id=?`, [title, source, description, thumb, id])
+    res.send(put)
 })
 
-app.use("/delete", async(req, res) => {
-    const { id } = req.query
+app.patch("/movies", async (re, res) => {
+    const
+    const db = await getDatabaseInstance()
+    const patch = await db.  
+})
+
+app.delete("/movies", async(req, res) => {
+    const { id } = req.body
     const db = await getDatabaseInstance()
     const remove = await db.get(`DELETE FROM movies WHERE id=?`, [id])
     res.send(remove)
