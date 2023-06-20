@@ -31,10 +31,10 @@ app.put("/movies", async (req, res) => {
     res.send(put)
 })
 
-app.patch("/movies", async (re, res) => {
-    const
+app.patch("/movies", async (req, res) => {
     const db = await getDatabaseInstance()
-    const patch = await db.  
+    const patch = await db.get(`UPDATE movies SET title=?, source=?, description=?, thumb=? WHERE id=?`)
+    res.send(patch) 
 })
 
 app.delete("/movies", async(req, res) => {
