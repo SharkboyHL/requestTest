@@ -36,20 +36,20 @@ app.post("/movies", login, async (req, res) => {
     const db = await getDatabaseInstance()
     const post = await db.run(`INSERT INTO movies(title, source, description, thumb) VALUES (?, ?, ?, ?)`,
         [title, source, description, thumb])
-    res.send(post)
+    res.json(post)
 })
 
 app.get("/movies", login, async (req, res) => {
     const db = await getDatabaseInstance()
     const get = await db.get(`SELECT * FROM movies ORDER BY id DESC`)
-    res.send(get)
+    res.json(get)
 })
 
 app.put("/movies", login, async (req, res) => {
     const { title, source, description, thumb, id } = req.body
     const db = await getDatabaseInstance()
     const put = await db.get(`UPDATE movies SET title=?, source=?, description=?, thumb=? WHERE id=?`, [title, source, description, thumb, id])
-    res.send(put)
+    res.json(put)
 })
 
 app.patch("/movies", login, async (req, res) => {
@@ -58,14 +58,14 @@ app.patch("/movies", login, async (req, res) => {
     const sets = Object.keys(req.body).map(key => `${key}=?`).join(", ")
     const values = Object.values(req.body)
     const patch = await db.run(`UPDATE movies SET ${sets} WHERE id=?`, [...values, id])
-    res.send(patch) 
+    res.json(patch) 
 })
 
 app.delete("/movies", login, async(req, res) => {
     const { id } = req.body
     const db = await getDatabaseInstance()
     const remove = await db.get(`DELETE FROM movies WHERE id=?`, [id])
-    res.send(remove)
+    res.json(remove)
 })
 
 app.listen(3000, () => console.log("Servidor rodando !"))

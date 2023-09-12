@@ -123,7 +123,7 @@
     });
 
     async function listarTodosOsFilmes() {
-        const response = await fetch("/movies");
+        const response = await fetch("/movies?token=" + localStorage.getItem("token"));
         const movies = await response.json();
         domMovieList.innerHTML = ""; // Limpa o conteúdo anterior
 
@@ -167,7 +167,7 @@
             thumb: domFormAlterar.thumb.value,
         });
 
-        const response = await fetch("/movies", {
+        const response = await fetch("/movies?token=" + localStorage.getItem("token"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body,
