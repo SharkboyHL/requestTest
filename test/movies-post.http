@@ -1,4 +1,4 @@
-POST https://sharkboyhl-studious-zebra-7jq7w7wwxpghp4xq-3000.preview.app.github.dev/movies HTTP/1.1
+POST https://musical-succotash-7jq7w7ww49j3w4r6-3000.app.github.dev/movies HTTP/1.1
 content-type: application/json
 
 {

@@ -3,30 +3,182 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Request Test</title>
+    <title>Teste</title>
 </head>
 
+<style>
+    ul,
+    li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    ul.movie-list {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    ul.movie-list>li {
+        border: 1px solid #000000;
+        margin: 1rem;
+        cursor: pointer;
+    }
+
+    ul.movie-list>li>div {
+        background-color: #000000;
+        padding: .25rem .5rem;
+        color: #FFFFFF;
+    }
+
+    ul.movie-list>li>ul {
+        padding: .5rem;
+        transition: .3s;
+    }
+
+    ul.movie-list>li>ul:hover {
+        background-color: #00000033;
+    }
+</style>
+
 <body>
+    <dialog>
+        <header>
+            <h1>Logue-se</h1>
+        </header>
+        <main>
+            <form action="dialog">
+                <input placeholder="usuario" name="usuario">
+                <input placeholder="senha" name="senha">
+            </form>
+        </main>
+        <footer>
+            <div class="msg"></div>
+            <button class="bt-send">logar</button>
+            <button class="bt-cancel">cancelar</button>
+        </footer>
+    </dialog>
+    <form class="form-alterar">
+        <div>
+            <label for="title">title</label>
+            <input name="title" id="title">
+        </div>
+        <div>
+            <label for="source">source</label>
+            <input name="source" id="source">
+        </div>
+        <div>
+            <label for="description">description</label>
+            <input name="description" id="description">
+        </div>
+        <div>
+            <label for="thumb">thumb</label>
+            <input name="thumb" id="thumb">
+        </div>
+        <div>
+            <button>Cadastrar</button>
+        </div>
+    </form>
+    <ul class="movie-list">
+        <!--  -->
+    </ul>
+
     <script>
-        async function main() {
-            const now = new Date()
-            const request = await fetch("data.json")
-            const data = await request.json()
+    const domMovieList = document.querySelector("ul.movie-list");
+    const domFormAlterar = document.querySelector("form.form-alterar");
+    const loginModal = document.querySelector("dialog");
+    const loginForm = loginModal.querySelector("form");
+    const loginMsg = loginModal.querySelector(".msg");
+    const loginFormButtonSend = loginModal.querySelector(".bt-send");
 
-            data.forEach(pessoa => {
-                const [y, m, d] = pessoa.dataNasc
-                const nasc = new Date(y,m,d)
-                document.body.innerHTML += `<button>
-                    ${pessoa.nome},
-                    ${now.getTime() - nasc.getTime()},
-                    ${pessoa.apelido},
-                    ${pessoa.corFavorita}
-                </button>`
-            })
+    if (!localStorage.getItem("token")) {
+        loginModal.showModal();
+    } else {
+        listarTodosOsFilmes();
+    }
+
+    loginFormButtonSend.addEventListener("click", async ev => {
+        ev.preventDefault(); // Evitar que o formulário seja enviado
+        const login = loginForm.querySelector('input[name="usuario"]');
+        const senha = loginForm.querySelector('input[name="senha"]');
+
+        
+        if (login.value && senha.value) {
+            try {
+                const response = await fetch(`/login?login=${login.value}&senha=${senha.value}`);
+                const data = await response.json();
+                
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                    loginModal.close();
+                    listarTodosOsFilmes();
+                    return;
+                }
+                
+                loginMsg.innerHTML = `<strong>Usuário e/ou senha inválidos</strong>`;
+            } catch (error) {
+                console.error("Erro na requisição de login:", error);
+            }
         }
+    });
 
-        main()
-    </script>
+    async function listarTodosOsFilmes() {
+        const response = await fetch("/movies");
+        const movies = await response.json();
+        domMovieList.innerHTML = ""; // Limpa o conteúdo anterior
+
+        movies.forEach(movie => {
+            domMovieList.innerHTML += `
+                <li>
+                    <strong>Title</strong>
+                    ${movie.title}
+                    <ul>
+                        <li>
+                            <strong>Source</strong>
+                            ${movie.source}
+                        </li>
+                        <li>
+                            <strong>Thumb</strong>
+                            ${movie.thumb}
+                        </li>
+                        <li>
+                            <strong>Description</strong>
+                            ${movie.description}
+                        </li>
+                        <li>
+                            <button data-id="${movie.id}">excluir</button>
+                            <button data-id="${movie.id}">alterar</button>
+                        </li>
+                    </ul>
+                </li>
+            `;
+        });
+    }
+
+    domFormAlterar.addEventListener("submit", async ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+
+        const body = JSON.stringify({
+            title: domFormAlterar.title.value,
+            source: domFormAlterar.source.value,
+            description: domFormAlterar.description.value,
+            thumb: domFormAlterar.thumb.value,
+        });
+
+        const response = await fetch("/movies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body,
+        });
+
+        const result = await response.json();
+        domFormAlterar.reset();
+        listarTodosOsFilmes();
+    });
+</script>
+
 </body>
 
 </html>

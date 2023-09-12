@@ -1,0 +1,6 @@
+PATCH https://sharkboyhl-studious-zebra-7jq7w7wwxpghp4xq-3000.preview.app.github.dev/movies?id=1 HTTP/1.1
+content-type: application/json
+
+{
+  "title": "Poderoso Chefão"
+}
